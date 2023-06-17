@@ -1,0 +1,15 @@
+# YML version
+version: '3'
+
+services:
+  rabbitmq: # rabbitmq
+    image: rabbitmq:3-management # pull the rabbitmq image from  dockerhub
+    logging:
+      driver: none # disable logging
+    ports:
+      - '5672:5672'
+      - 15672:15672
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
