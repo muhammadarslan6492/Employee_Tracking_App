@@ -3,6 +3,12 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import cors from 'cors';
 import * as http from 'http';
+import { config } from 'dotenv';
+
+import RabbitConnection from './core/rabbitmq';
+import Socket from './core/socket';
+
+config();
 
 const root = path.normalize(`${__dirname}/../..`);
 const app = new Express();
@@ -28,6 +34,11 @@ app.get('/', (req, res) => {
 });
 
 try {
+  const socketServer = new Socket(server);
+  setTimeout(() => {
+    RabbitConnection.getInstance();
+  }, 2000);
+
   app.use((req, res) => {
     res.status(404).json({ message: `${req.url} path not found` });
   });

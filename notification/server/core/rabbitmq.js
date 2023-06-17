@@ -1,4 +1,7 @@
+import amqp from 'amqplib';
+
 import socketServer from './socket';
+import mail from './utils/email';
 
 class RabbitConnection {
   constructor() {
@@ -19,6 +22,7 @@ class RabbitConnection {
   static async createConnection() {
     try {
       this.connection = await amqp.connect('amqp://guest:guest@localhost:5672');
+      console.log('notification rabbitmq connection establish');
       this.channel = await this.connection.createChannel();
       this.channel.assertQueue(process.env.NOTIFICATION_QUEUE);
       this.channel.assertQueue(process.env.EMAIL_QUEUE);
@@ -26,13 +30,14 @@ class RabbitConnection {
       // consumer functions
 
       this.channel
-        .consume(process.env.EMAIL_QUEUE, (data) => {
+        .consume(process.env.EMAIL_QUEUE, async (data) => {
           const recievedData = JSON.parse(data.content);
           const mailData = {
             subject: 'Enter desired subject here',
             html: `${recievedData.message}`,
           };
-          mail(recievedData.email, mailData);
+          console.log(recievedData);
+          // await mail();
           this.channel.ack(data);
         })
         .catch((err) => {
