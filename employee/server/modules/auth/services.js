@@ -25,8 +25,9 @@ class AuthService extends Repo {
     // ADD RABBIRMQ NOT NOTIFICATION
     const notificationdata = {
       email: user.email,
+      id: user._id,
+      message: 'this is test email message',
     };
-
     RabbitConnection.generateNotification(
       notificationdata,
       process.env.NOTIFICATION_QUEUE,

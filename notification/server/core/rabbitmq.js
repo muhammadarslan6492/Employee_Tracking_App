@@ -32,26 +32,13 @@ class RabbitConnection {
       this.channel
         .consume(process.env.EMAIL_QUEUE, async (data) => {
           const recievedData = JSON.parse(data.content);
-          const mailData = {
-            subject: 'Enter desired subject here',
-            html: `${recievedData.message}`,
-          };
           console.log(recievedData);
-          // await mail();
-          this.channel.ack(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      this.channel
-        .consume(process.env.NOTIFICATION_QUEUE, (data) => {
-          const recievedData = JSON.parse(data.content);
-          socketServer.generateNotification(
-            recievedData.userId,
-            recievedData.message,
-          );
-
+          const mailData = {
+            email: recievedData.email,
+            id: recievedData.id,
+          };
+          const ok = await mail(mailData.email, mailData);
+          console.log('this is ok', ok);
           this.channel.ack(data);
         })
         .catch((err) => {

@@ -6,10 +6,9 @@ config();
 
 sgMail.setApiKey(process.env.SEND_GRID_KEY);
 
-sgMail.setApiKey(process.env.SENDGRID);
-
 const sendEmail = async (to, object) => {
   try {
+    console.log('this is to', to);
     const token = jwt.sign({ id: object.id }, process.env.JWT, {
       expiresIn: 36000,
     });
@@ -22,6 +21,7 @@ const sendEmail = async (to, object) => {
     await sgMail.send(msg);
     return true;
   } catch (err) {
+    console.log(err.response.body);
     return false;
   }
 };
