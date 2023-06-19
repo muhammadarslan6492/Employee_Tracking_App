@@ -43,6 +43,7 @@ export default class RabbitConnection {
         Buffer.from(JSON.stringify(data)),
       );
       console.log('message sent to the RabbitMQ queue');
+      console.log(msg);
       return msg;
     } catch (err) {
       return err;

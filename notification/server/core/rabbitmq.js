@@ -26,8 +26,18 @@ class RabbitConnection {
       this.channel = await this.connection.createChannel();
       this.channel.assertQueue(process.env.NOTIFICATION_QUEUE);
       this.channel.assertQueue(process.env.EMAIL_QUEUE);
+      this.channel.assertQueue(process.env.ADMIN_NOTIFICATION);
 
       // consumer functions
+      this.channel
+        .consume(process.env.ADMIN_NOTIFICATION, (data) => {
+          const recive = JSON.parse(data.content);
+          console.log('this is for admin', recive);
+          this.channel.ack(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
       this.channel
         .consume(process.env.EMAIL_QUEUE, async (data) => {
@@ -37,13 +47,25 @@ class RabbitConnection {
             email: recievedData.email,
             id: recievedData.id,
           };
-          const ok = await mail(mailData.email, mailData);
-          console.log('this is ok', ok);
+          await mail(mailData.email, mailData);
           this.channel.ack(data);
         })
         .catch((err) => {
           console.log(err);
         });
+
+      ////
+      this.channel
+        .consume(process.env.ADMIN_NOTIFICATION, (data) => {
+          const recievedData = JSON.parse(data.content);
+          console.log('recievedData', recievedData);
+          this.channel.ack(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      /////
     } catch (error) {
       console.log(error);
     }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Dashboard</title>
+    <style>
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Admin Dashboard</h1>
+
+    <h2>Task Locations</h2>
+    <div id="map"></div>
+
+    <h2>Create Geofence</h2>
+    <form id="geofenceForm">
+      <label for="geofenceName">Geofence Name:</label>
+      <input type="text" id="geofenceName" required />
+      <br />
+      <label for="geofenceLatitude">Latitude:</label>
+      <input type="text" id="geofenceLatitude" required />
+      <br />
+      <label for="geofenceLongitude">Longitude:</label>
+      <input type="text" id="geofenceLongitude" required />
+      <br />
+      <button type="submit">Create Geofence</button>
+    </form>
+
+    <script>
+      // Load the Google Maps JavaScript API
+      function initMap() {
+        // Set the default map center and options
+        const map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 0, lng: 0 },
+          zoom: 8,
+        });
+
+        // Fetch task locations from your server and display markers on the map
+        // Replace this logic with your own implementation to retrieve task locations from your database
+        fetch('/api/taskLocations')
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((location) => {
+              const marker = new google.maps.Marker({
+                position: { lat: location.latitude, lng: location.longitude },
+                map,
+                title: location.address,
+              });
+            });
+          })
+          .catch((error) => console.log(error));
+
+        // Create geofence when the form is submitted
+        document
+          .getElementById('geofenceForm')
+          .addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const geofenceName = document.getElementById('geofenceName').value;
+            const geofenceLatitude = parseFloat(
+              document.getElementById('geofenceLatitude').value,
+            );
+            const geofenceLongitude = parseFloat(
+              document.getElementById('geofenceLongitude').value,
+            );
+
+            // Send the geofence data to your server for saving
+            // Replace this logic with your own implementation to send geofence data to your server
+            fetch('/api/geofences', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                name: geofenceName,
+                latitude: geofenceLatitude,
+                longitude: geofenceLongitude,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Geofence created successfully');
+              })
+              .catch((error) => console.log(error));
+          });
+      }
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"
+      async
+      defer
+    ></script>
+  </body>
+</html>

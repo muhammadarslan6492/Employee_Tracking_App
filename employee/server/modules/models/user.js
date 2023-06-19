@@ -19,6 +19,17 @@ const userSchema = new mongoose.Schema({
     enum: ['EMPLOYEE', 'ADMIN'],
     default: 'EMPLOYEE',
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  online: Boolean,
+  pushToken: String,
+  lastLogin: Date,
+  block: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = mongoose.model('User', userSchema);

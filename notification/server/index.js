@@ -13,6 +13,7 @@ config();
 const root = path.normalize(`${__dirname}/../..`);
 const app = new Express();
 const server = http.createServer(app);
+const socketServer = new Socket(server);
 
 app.set('appPath', `${root}client`);
 app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '1000kb' }));
@@ -34,7 +35,6 @@ app.get('/', (req, res) => {
 });
 
 try {
-  const socketServer = new Socket(server);
   setTimeout(() => {
     RabbitConnection.getInstance();
   }, 2000);
@@ -49,3 +49,5 @@ try {
 } catch (err) {
   console.log(err);
 }
+
+export { socketServer };

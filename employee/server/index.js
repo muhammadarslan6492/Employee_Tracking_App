@@ -36,7 +36,7 @@ app.use(
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-  res.status(200).json({ msg: 'apis is working' });
+  res.sendFile(`${__dirname}/public/index.html`);
 });
 
 try {
