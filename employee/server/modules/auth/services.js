@@ -12,6 +12,7 @@ class AuthService extends Repo {
 
   async createUser(obj) {
     let response = await this.findOne({ email: obj.email });
+    console.log('users', response);
     if (response) {
       throw new Conflict('User already existed in the system');
     }

@@ -29,13 +29,15 @@ export default class Repo {
       return { error };
     }
   }
-  async findOne(where, attr) {
+  async findOne(where, populate) {
     try {
       let params = where;
-      if (attr) {
-        params.aggr = attr;
+      let response;
+      if (populate) {
+        response = await this.model.findOne(params).populate(populate);
+      } else {
+        response = await this.model.findOne(params);
       }
-      const response = await this.model.findOne(params);
       return response;
     } catch (error) {
       return { error };

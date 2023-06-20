@@ -99,7 +99,12 @@ class AdminService {
     if (!employee) {
       throw new Conflict('Employee not exist with this emp_id');
     }
-
+    const populate = {
+      path: 'userId reportsTo',
+      select: 'name email',
+    };
+    employee = await this.Employee.findOne({ _id: id }, populate);
+    console.log(employee);
     return {
       success: true,
       statusCode: 200,
