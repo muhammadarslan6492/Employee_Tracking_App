@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export default class Repo {
   constructor(model) {
     console.log(model);
@@ -39,8 +41,10 @@ export default class Repo {
       return { error };
     }
   }
-  async aggr(query) {
+  async aggr(id) {
     try {
+      const response = await this.model.aggregate(pipeline).toArray();
+      return response[0];
     } catch (error) {
       return { error };
     }
@@ -60,7 +64,7 @@ export default class Repo {
   async deleteRecord(where) {
     try {
       const response = await this.model.findOneAndDelete(where);
-      return { response };
+      return response;
     } catch (error) {
       return { error };
     }

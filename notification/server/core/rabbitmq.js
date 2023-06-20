@@ -2,6 +2,7 @@ import amqp from 'amqplib';
 
 import socketServer from './socket';
 import mail from './utils/email';
+import EmployeeRegisterationEmail from './utils/employeeSignup';
 
 class RabbitConnection {
   constructor() {
@@ -27,8 +28,9 @@ class RabbitConnection {
       this.channel.assertQueue(process.env.NOTIFICATION_QUEUE);
       this.channel.assertQueue(process.env.EMAIL_QUEUE);
       this.channel.assertQueue(process.env.ADMIN_NOTIFICATION);
+      this.channel.assertQueue(process.env.EMP_CREATION_QUEUE);
 
-      // consumer functions
+      // consumer functions for admin
       this.channel
         .consume(process.env.ADMIN_NOTIFICATION, (data) => {
           const recive = JSON.parse(data.content);
@@ -54,11 +56,17 @@ class RabbitConnection {
           console.log(err);
         });
 
-      ////
+      //// this is employee creatiation emial
       this.channel
-        .consume(process.env.ADMIN_NOTIFICATION, (data) => {
+        .consume(process.env.EMP_CREATION_QUEUE, async (data) => {
           const recievedData = JSON.parse(data.content);
           console.log('recievedData', recievedData);
+          const mailData = {
+            email: recievedData.email,
+            password: recievedData.password,
+            message: recievedData.message,
+          };
+          await EmployeeRegisterationEmail(mailData);
           this.channel.ack(data);
         })
         .catch((err) => {
