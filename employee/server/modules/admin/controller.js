@@ -57,13 +57,26 @@ class Controller {
   }
   async employees(req, res) {
     try {
-      // const filters = {
-      //   ...(city && { city }),
-      //   ...(price && { price }),
-      //   ...(propertyType && { propertyType }),
-      // };
-
-      const response = await AdminService.getEmployees();
+      let param = {};
+      let { limit, skip, email, name, position } = req.query;
+      if (!limit) {
+        limit = process.env.LIMIT;
+      }
+      if (!skip) {
+        skip = process.env.SKIP;
+      }
+      console.log(email, name, position);
+      if (email) {
+        param.email = email;
+      }
+      if (name) {
+        param.name = name;
+      }
+      if (position) {
+        param.position = position;
+      }
+      const pagination = { limit: parseInt(limit), skip: parseInt(skip) };
+      const response = await AdminService.getEmployees(param, pagination);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });

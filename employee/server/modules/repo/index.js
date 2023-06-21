@@ -43,10 +43,10 @@ export default class Repo {
       return { error };
     }
   }
-  async aggr(id) {
+  async aggr(pipeline) {
     try {
-      const response = await this.model.aggregate(pipeline).toArray();
-      return response[0];
+      const response = await this.model.aggregate(pipeline);
+      return response;
     } catch (error) {
       return { error };
     }

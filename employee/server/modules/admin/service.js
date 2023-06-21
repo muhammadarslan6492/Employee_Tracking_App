@@ -139,11 +139,9 @@ class AdminService {
     };
   }
 
-  async getEmployees() {
-    const employee = await Employee.aggregate([
-      {
-        $match: { position: 'Team_lead' },
-      },
+  async getEmployees(param, pagination) {
+    const matchFilter = param;
+    const pipeline = [
       {
         $lookup: {
           from: 'users',
@@ -152,7 +150,48 @@ class AdminService {
           as: 'user',
         },
       },
-    ]);
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [{ $arrayElemAt: ['$user', 0] }, '$$ROOT'],
+          },
+        },
+      },
+      {
+        $match: matchFilter,
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          email: 1,
+          role: 1,
+          position: 1,
+          verify: 1,
+          block: 1,
+          contact: 1,
+          reportsTo: 1,
+        },
+      },
+      {
+        $facet: {
+          metadata: [
+            { $count: 'totalRecords' },
+            {
+              $addFields: {
+                TotalPages: {
+                  $ceil: { $divide: ['$totalRecords', pagination.limit] },
+                },
+              },
+            },
+          ],
+          data: [{ $skip: pagination.skip }, { $limit: pagination.limit }],
+        },
+      },
+    ];
+
+    const employee = await this.Employee.aggr(pipeline);
+
     return {
       success: true,
       statusCode: 200,
