@@ -7,6 +7,7 @@ import AdminController from './controller';
 const router = express.Router();
 
 router.post('/employee', auth, Admin, AdminController.createEmploye);
+router.get('/employee', auth, Admin, AdminController.employees);
 router.get('/employee/:empId', auth, Admin, AdminController.employeeById);
 router.get('/employee/:empId/block', auth, Admin, AdminController.blockUser);
 router.get(

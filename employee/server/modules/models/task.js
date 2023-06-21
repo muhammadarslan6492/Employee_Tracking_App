@@ -31,11 +31,6 @@ const taskSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Geofence',
   },
-
-  client: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Client',
-  },
 });
 
 const Task = mongoose.model('Task', taskSchema);

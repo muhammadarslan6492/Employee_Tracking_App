@@ -57,7 +57,13 @@ class Controller {
   }
   async employees(req, res) {
     try {
-      const response = await AdminService.createEmployee(body);
+      // const filters = {
+      //   ...(city && { city }),
+      //   ...(price && { price }),
+      //   ...(propertyType && { propertyType }),
+      // };
+
+      const response = await AdminService.getEmployees();
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });

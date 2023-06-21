@@ -138,6 +138,28 @@ class AdminService {
       message: 'Employee unblock Successfully',
     };
   }
+
+  async getEmployees() {
+    const employee = await Employee.aggregate([
+      {
+        $match: { position: 'Team_lead' },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+    ]);
+    return {
+      success: true,
+      statusCode: 200,
+      message: 'Employee unblock Successfully',
+      employee,
+    };
+  }
 }
 
 export default new AdminService();
