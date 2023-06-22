@@ -11,12 +11,17 @@ import { config } from 'dotenv';
 import db from './config/db';
 import Router from './modules/router/index';
 import RabbitConnection from './config/rabbitmq';
+import Socket from './config/socket-io';
 
 config();
 
 const port = process.env.PORT || 3000;
 const root = path.normalize(`${__dirname}/../..`);
 const app = new Express();
+const httpServer = http.createServer(app);
+const socketServer = new Socket(httpServer);
+
+// app middlewares
 app.set('appPath', `${root}client`);
 app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '1000kb' }));
 app.use(
@@ -41,14 +46,13 @@ app.get('/', (req, res) => {
 
 try {
   db();
-
   setInterval(() => {
     RabbitConnection.getInstance();
   }, 2000);
 
   app.use('/api/v1', Router);
 
-  http.createServer(app).listen(port, () => {
+  httpServer.listen(port, () => {
     const msg = `up and running in ${
       process.env.NODE_ENV || 'development'
     } @: ${os.hostname()} on port: ${port}}`;
@@ -58,4 +62,4 @@ try {
   console.log(err);
 }
 
-export { app };
+export { app, socketServer };

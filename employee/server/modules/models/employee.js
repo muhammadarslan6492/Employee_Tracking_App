@@ -14,10 +14,17 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    value: ['Available', 'OnTask'],
+    default: 'Available',
+  },
   reportsTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  lat: Number,
+  lng: Number,
 });
 
 const Employee = mongoose.model('Employee', employeeSchema);
