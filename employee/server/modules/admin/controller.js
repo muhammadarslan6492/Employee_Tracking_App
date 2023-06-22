@@ -2,7 +2,7 @@ import AdminService from './service';
 
 class Controller {
   constructor() {}
-
+  // *** employee start ****
   async createEmploye(req, res) {
     try {
       const { body } = req;
@@ -77,6 +77,54 @@ class Controller {
       }
       const pagination = { limit: parseInt(limit), skip: parseInt(skip) };
       const response = await AdminService.getEmployees(param, pagination);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+  // **** employee end ****
+
+  async createGeofance(req, res) {
+    try {
+      const { address, radius, lat, lng } = req.body;
+      const paylod = { address, radius, lat, lng };
+      const response = await AdminService.createGeofance(paylod);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+  async updateGeofacnce(req, res) {
+    try {
+      const { body } = req;
+      const response = await AdminService.createGeofance(body);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+  async geofanceById(req, res) {
+    try {
+      const { geoId } = req.params;
+      const response = await AdminService.createGeofance(geoId);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+  async allGeofance(req, res) {
+    try {
+      let param = {};
+      const response = await AdminService.createGeofance(param);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+  async deleteGeoface(req, res) {
+    try {
+      const { geoId } = req.params;
+      const response = await AdminService.createGeofance(geoId);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });

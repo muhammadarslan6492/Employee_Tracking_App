@@ -7,6 +7,11 @@ const geofenceSchema = new mongoose.Schema({
     coordinates: { type: [Number], required: true },
   },
   radius: { type: Number, required: true },
+  status: {
+    type: String,
+    vaue: ['OPEN', 'CLOSED'],
+    default: 'OPEN',
+  },
 });
 
 geofenceSchema.index({ location: '2dsphere' });

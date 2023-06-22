@@ -31,6 +31,8 @@ const taskSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Geofence',
   },
+  imagesBefore: [String],
+  imagesAfter: [String],
 });
 
 const Task = mongoose.model('Task', taskSchema);
