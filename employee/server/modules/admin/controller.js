@@ -130,6 +130,70 @@ class Controller {
       return res.status(500).json({ error: err.message });
     }
   }
+
+  //**** geofance apis ended
+
+  async createTask(req, res) {
+    try {
+      const { body } = req;
+      const response = await AdminService.createTask(body);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  async updateTask(req, res) {
+    try {
+      const { tastId } = req.params;
+      const { body } = req;
+      const response = await AdminService.updateTask(tastId, body);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  async deleteTask(req, res) {
+    try {
+      const { tastId } = req.params;
+      const response = await AdminService.deletTask(tastId);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  async taskById(req, res) {
+    try {
+      const { tastId } = req.params;
+      const response = await AdminService.taskById(tastId);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  async allTask(req, res) {
+    try {
+      let qp = {};
+      const param = req.query;
+      const response = await AdminService.allTask(tastId);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  async taskStats(req, res) {
+    try {
+      const param = req.query;
+      const response = await AdminService.taskStats(tastId);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
 }
 
 export default new Controller();
