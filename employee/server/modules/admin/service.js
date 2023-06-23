@@ -11,7 +11,7 @@ import {
   User,
   Task,
   Employee,
-  Locations,
+  Location,
   Geofance,
   Aduit,
   Notification,
@@ -22,7 +22,7 @@ class AdminService {
     this.User = new Repo(User);
     this.Tash = new Repo(Task);
     this.Employee = new Repo(Employee);
-    this.Locations = new Repo(Locations);
+    this.Locations = new Repo(Location);
     this.Geofance = new Repo(Geofance);
     this.Aduit = new Repo(Aduit);
     this.Notification = new Repo(Notification);
@@ -197,6 +197,61 @@ class AdminService {
       statusCode: 200,
       message: 'Employee unblock Successfully',
       employee,
+    };
+  }
+
+  async createGeofance(data) {
+    const response = await this.Geofance.create(data);
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Geofance Created successfully',
+      geoFanceId: response._id,
+    };
+  }
+  async updateGeofance(id, data) {
+    const geofance = await this.Geofance.findOne({ _id: id });
+    if (!geofance) {
+      throw new Conflict('Geofance dose not exist with this id');
+    }
+    await this.Geofance.updateRecode({ _id: id }, data);
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Geofance updated successfully',
+    };
+  }
+  async deleteGeofance(id) {
+    const geofance = await this.Geofance.findOne({ _id: id });
+    if (!geofance) {
+      throw new Conflict('Geofance dose not exist with this id');
+    }
+    await this.Geofance.deleteRecord({ _id: id });
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Geofance deleted successfully',
+    };
+  }
+  async geofanceById(id) {
+    const geofance = await this.Geofance.findOne({ _id: id });
+    if (!geofance) {
+      throw new Conflict('Geofance dose not exist with this id');
+    }
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Geofance fetch successfully',
+      geofance,
+    };
+  }
+  async allGeofance() {
+    const geofance = await this.Geofance.findAll();
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Geofance data fetched successfully',
+      geofance,
     };
   }
 }

@@ -97,7 +97,8 @@ class Controller {
   async updateGeofacnce(req, res) {
     try {
       const { body } = req;
-      const response = await AdminService.createGeofance(body);
+      const { geoId } = req.params;
+      const response = await AdminService.updateGeofance(geoId, body);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -106,7 +107,7 @@ class Controller {
   async geofanceById(req, res) {
     try {
       const { geoId } = req.params;
-      const response = await AdminService.createGeofance(geoId);
+      const response = await AdminService.geofanceById(geoId);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -114,8 +115,7 @@ class Controller {
   }
   async allGeofance(req, res) {
     try {
-      let param = {};
-      const response = await AdminService.createGeofance(param);
+      const response = await AdminService.allGeofance();
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -124,7 +124,7 @@ class Controller {
   async deleteGeoface(req, res) {
     try {
       const { geoId } = req.params;
-      const response = await AdminService.createGeofance(geoId);
+      const response = await AdminService.deleteGeofance(geoId);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
