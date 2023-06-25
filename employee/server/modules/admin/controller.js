@@ -145,9 +145,9 @@ class Controller {
 
   async updateTask(req, res) {
     try {
-      const { tastId } = req.params;
+      const { taskId } = req.params;
       const { body } = req;
-      const response = await AdminService.updateTask(tastId, body);
+      const response = await AdminService.updateTask(taskId, body);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -156,8 +156,8 @@ class Controller {
 
   async deleteTask(req, res) {
     try {
-      const { tastId } = req.params;
-      const response = await AdminService.deletTask(tastId);
+      const { taskId } = req.params;
+      const response = await AdminService.deletTask(taskId);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -166,8 +166,8 @@ class Controller {
 
   async taskById(req, res) {
     try {
-      const { tastId } = req.params;
-      const response = await AdminService.taskById(tastId);
+      const { taskId } = req.params;
+      const response = await AdminService.taskById(taskId);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -178,7 +178,7 @@ class Controller {
     try {
       let qp = {};
       const param = req.query;
-      const response = await AdminService.allTask(tastId);
+      const response = await AdminService.allTask();
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -188,7 +188,7 @@ class Controller {
   async taskStats(req, res) {
     try {
       const param = req.query;
-      const response = await AdminService.taskStats(tastId);
+      const response = await AdminService.taskStats();
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });

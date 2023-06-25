@@ -25,4 +25,11 @@ router.get('/geofance/:geoId', auth, Admin, AdminController.geofanceById);
 router.put('/geofance/:geoId', auth, Admin, AdminController.updateGeofacnce);
 router.delete('/geofance/:geoId', auth, Admin, AdminController.deleteGeoface);
 
+router.get('/task/stats', auth, Admin, AdminController.taskStats);
+router.post('/task', auth, Admin, AdminController.createTask);
+router.get('/task', auth, Admin, AdminController.allTask);
+router.put('/task/:taskId', auth, Admin, AdminController.updateTask);
+router.get('/task/:taskId', auth, Admin, AdminController.taskById);
+router.delete('/task/:taskId', auth, Admin, AdminController.deleteTask);
+
 export default router;
