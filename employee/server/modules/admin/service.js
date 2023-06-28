@@ -20,7 +20,7 @@ import {
 class AdminService {
   constructor() {
     this.User = new Repo(User);
-    this.Tash = new Repo(Task);
+    this.Task = new Repo(Task);
     this.Employee = new Repo(Employee);
     this.Locations = new Repo(Location);
     this.Geofance = new Repo(Geofance);
@@ -254,6 +254,48 @@ class AdminService {
       geofance,
     };
   }
+  async createTask(data) {
+    const task = this.Task.create(data);
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Task created successfully',
+      task,
+    };
+  }
+  async taskById(id) {
+    const task = this.Task.findOne({ _id: id });
+    if (!task) {
+      throw new Conflict('Task not found with this id');
+    }
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Task fetched successfully',
+      task,
+    };
+  }
+  async deleteTask(id) {
+    const task = this.Task.deleteRecord({ _id: id });
+    if (!task) {
+      throw new Conflict('Task not found with this id');
+    }
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Task task delete successfully',
+    };
+  }
+  async updateTask(id, data) {
+    const task = this.Task.updateRecode({ _id: id }, updateTask);
+    if (!task) {
+      throw new Conflict('Task not found with this id');
+    }
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Task task delete successfully',
+    };
+  }
 }
-
 export default new AdminService();

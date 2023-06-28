@@ -157,7 +157,7 @@ class Controller {
   async deleteTask(req, res) {
     try {
       const { taskId } = req.params;
-      const response = await AdminService.deletTask(taskId);
+      const response = await AdminService.deleteTask(taskId);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
