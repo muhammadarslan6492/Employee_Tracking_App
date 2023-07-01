@@ -18,12 +18,24 @@ router.get(
 );
 router.put('/employee/:empId', auth, Admin, AdminController.updateEmployee);
 router.delete('/employee/:empId', auth, Admin, AdminController.deleteEmployee);
+router.post(
+  '/add-test-employees',
+  auth,
+  Admin,
+  AdminController.addTestEmployee,
+);
 
 router.post('/geoface', auth, Admin, AdminController.createGeofance);
 router.get('/geofance', auth, Admin, AdminController.allGeofance);
 router.get('/geofance/:geoId', auth, Admin, AdminController.geofanceById);
 router.put('/geofance/:geoId', auth, Admin, AdminController.updateGeofacnce);
 router.delete('/geofance/:geoId', auth, Admin, AdminController.deleteGeoface);
+router.put(
+  '/geofance/:geoId/validate-geofance-radius',
+  auth,
+  Admin,
+  AdminController.validateGeofance,
+);
 
 router.get('/task/stats', auth, Admin, AdminController.taskStats);
 router.post('/task', auth, Admin, AdminController.createTask);

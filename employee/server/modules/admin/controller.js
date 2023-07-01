@@ -6,8 +6,9 @@ class Controller {
   async createEmploye(req, res) {
     try {
       const { body } = req;
+      const { _id } = req.user;
       body.role = 'EMPLOYEE';
-      const response = await AdminService.createEmployee(body);
+      const response = await AdminService.createEmployee(body, _id);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -82,13 +83,23 @@ class Controller {
       return res.status(500).json({ error: err.message });
     }
   }
+
+  async addTestEmployee(req, res) {
+    try {
+      const { employees } = req.body;
+      const { _id } = req.user;
+      const response = await AdminService.addTestEmployee(employees, _id);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
   // **** employee end ****
 
   async createGeofance(req, res) {
     try {
-      const { address, radius, lat, lng } = req.body;
-      const paylod = { address, radius, lat, lng };
-      const response = await AdminService.createGeofance(paylod);
+      const { body } = req;
+      const response = await AdminService.createGeofance(body);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -115,7 +126,15 @@ class Controller {
   }
   async allGeofance(req, res) {
     try {
-      const response = await AdminService.allGeofance();
+      let param = {};
+      let { address, status } = req.query;
+      if (address) {
+        param.address = address;
+      }
+      if (status) {
+        param.status = status;
+      }
+      const response = await AdminService.allGeofance(param);
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });
@@ -125,6 +144,21 @@ class Controller {
     try {
       const { geoId } = req.params;
       const response = await AdminService.deleteGeofance(geoId);
+      return res.status(response.statusCode).json(response);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  async validateGeofance(req, res) {
+    try {
+      const { lat, lng } = req.body;
+      const { geoId } = req.params;
+      const response = await AdminService.checkLocationInRadius(
+        geoId,
+        lat,
+        lng,
+      );
       return res.status(response.statusCode).json(response);
     } catch (err) {
       return res.status(500).json({ error: err.message });

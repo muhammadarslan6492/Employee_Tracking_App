@@ -1,8 +1,6 @@
 import Repo from '../repo/index';
 import { Conflict, BadRequest, NotFound } from 'fejl';
 import * as bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 
 import { generatePassword } from '../helper/utils';
 import RabbitConnection from '../../config/rabbitmq';
@@ -28,7 +26,27 @@ class AdminService {
     this.Notification = new Repo(Notification);
   }
 
-  async createEmployee(payload) {
+  generateRandomCoordinates(centerLat, centerLng, radius) {
+    // Convert radius from meters to degrees
+    const radiusInDegrees = radius / 111300;
+
+    const u = Math.random();
+    const v = Math.random();
+    const w = radiusInDegrees * Math.sqrt(u);
+    const t = 2 * Math.PI * v;
+    const x = w * Math.cos(t);
+    const y = w * Math.sin(t);
+
+    // Adjust the x-coordinate for the desired center point
+    const newX = x / Math.cos(centerLat);
+
+    const foundLongitude = newX + centerLng;
+    const foundLatitude = y + centerLat;
+
+    return { latitude: foundLatitude, longitude: foundLongitude };
+  }
+
+  async createEmployee(payload, reportsTo) {
     const checkExisted = await this.User.findOne({ email: payload.email });
     if (checkExisted) {
       throw new Conflict('User alredy existed');
@@ -52,7 +70,7 @@ class AdminService {
       userId: user._id,
       contact: payload.contact,
       position: payload.position,
-      reportsTo: '648f60d3239065cf76c74d6a',
+      reportsTo: reportsTo,
     };
     const employee = await this.Employee.create(empData);
     //EMP_CREATION_QUEUE
@@ -113,7 +131,7 @@ class AdminService {
     };
   }
 
-  async blockEmployee(empId, payload) {
+  async blockEmployee(empId) {
     const employee = await this.Employee.findOne({ _id: empId });
     if (!employee) {
       throw new Conflict('Employee not exist with this emp_id');
@@ -200,13 +218,40 @@ class AdminService {
     };
   }
 
+  async addTestEmployee(arrData, reportsTo) {
+    const empArr = arrData.map((item) => {
+      item.password = generatePassword(item.password);
+      return item;
+    });
+    const users = await this.User.create(arrData);
+
+    const employeeDate = users.map((user, index) => {
+      const data = {
+        userId: user._id,
+        contact: empArr[index].contact,
+        position: empArr[index].position,
+        reportsTo: reportsTo,
+      };
+      return data;
+    });
+
+    const { response } = await this.Employee.insertMany(employeeDate);
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: 'Employee created Successfully',
+      employees: response,
+    };
+  }
+
   async createGeofance(data) {
     const response = await this.Geofance.create(data);
     return {
       success: true,
       statusCode: 201,
       message: 'Geofance Created successfully',
-      geoFanceId: response._id,
+      geoFanceId: response,
     };
   }
   async updateGeofance(id, data) {
@@ -245,13 +290,47 @@ class AdminService {
       geofance,
     };
   }
-  async allGeofance() {
-    const geofance = await this.Geofance.findAll();
+  async allGeofance(param) {
+    const geofance = await this.Geofance.findAll(param);
     return {
       success: true,
       statusCode: 201,
       message: 'Geofance data fetched successfully',
-      geofance,
+      geofance: geofance.response,
+    };
+  }
+  async checkLocationInRadius(geoId, lat, lng) {
+    const geofance = await this.Geofance.findOne({ _id: geoId });
+    if (!geofance) {
+      throw new NotFound('Geofance not found with this Id');
+    }
+
+    const randomCoordinates = this.generateRandomCoordinates(
+      geofance.location.coordinates[0],
+      geofance.location.coordinates[1],
+      1000,
+    );
+
+    console.log(randomCoordinates);
+
+    const checkGeofance = await this.Geofance.findOne({
+      _id: geoId,
+      location: {
+        $geoWithin: {
+          $centerSphere: [[lat, lng], 0.001], // Radius in radians (adjust as needed)
+        },
+      },
+    });
+
+    if (!checkGeofance) {
+      throw new NotFound('Geofance not found with this Id');
+    }
+
+    return {
+      success: true,
+      statusCode: 201,
+      message: 'Geofance data fetched successfully',
+      checkGeofance,
     };
   }
   async createTask(data) {
